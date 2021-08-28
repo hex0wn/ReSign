@@ -718,7 +718,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, ITab, IContex
     	for (IParameter para:paras){
     		if (paraMap.keySet().contains(para.getName())){
     			if (paraMap.get(para.getName()).contains("<timestamp>")){
-				String t = Long.toString(System.currentTimeMillis() / 1000)
+				String t = Long.toString(System.currentTimeMillis() / 1000);
     				paraMap.put(para.getName(), paraMap.get(para.getName()).replace("<timestamp>", t));
 				currentTime = helpers.buildParameter(para.getName(), t, para.getType());
     			}else {

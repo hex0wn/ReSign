@@ -90,6 +90,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, ITab, IContex
 	String signPara = null; //the key name of sign parameter
 	private JTextField textFieldSign;
 	private JCheckBox chckbxOnlyUseValue;
+	private IParameter currentTime = null;
 	
     
 	
@@ -119,6 +120,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, ITab, IContex
     			stdout.println("\r\n");
     			IRequestInfo analyzeRequest = helpers.analyzeRequest(messageInfo); //对消息体进行解析 
                 byte getSignParaType = getSignParaType(analyzeRequest);
+		currentTime = null;
                 
                 //*******************recalculate sign**************************//
 				if (getHost(analyzeRequest).equals(getHostFromUI()) && getSignParaType !=-1){//检查图形面板上的各种参数，都齐备了才进行。
@@ -148,6 +150,9 @@ public class BurpExtender implements IBurpExtender, IHttpListener, ITab, IContex
 					}else {
 	    				IParameter newPara = helpers.buildParameter(signPara, newSign, getSignParaType); //构造新的参数,如果参数是PARAM_JSON类型，这个方法是不适用的
 	    				new_Request = helpers.updateParameter(new_Request, newPara); //构造新的请求包，这里是方法一updateParameter
+					if (currentTime != null) {
+						new_Request = helpers.updateParameter(new_Request, currentTime);
+					}
 		    			messageInfo.setRequest(new_Request);//设置最终新的请求包
 					}
 
@@ -713,7 +718,9 @@ public class BurpExtender implements IBurpExtender, IHttpListener, ITab, IContex
     	for (IParameter para:paras){
     		if (paraMap.keySet().contains(para.getName())){
     			if (paraMap.get(para.getName()).contains("<timestamp>")){
-    				paraMap.put(para.getName(), paraMap.get(para.getName()).replace("<timestamp>", Long.toString(System.currentTimeMillis() / 1000)));
+				String t = Long.toString(System.currentTimeMillis() / 1000)
+    				paraMap.put(para.getName(), paraMap.get(para.getName()).replace("<timestamp>", t));
+				currentTime = helpers.buildParameter(para.getName(), t, para.getType());
     			}else {
     				paraMap.put(para.getName(), para.getValue());
     				//stdout.println(para.getName()+":"+para.getValue());

@@ -454,7 +454,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, ITab, IContex
 				}else{
 					String str = combineString(getParaFromTable(),getOnlyValueConfig(),getParaConnector());
 					if (str.contains("<timestamp>")){
-						str = str.replace("<timestamp>", Long.toString(System.currentTimeMillis()));//需要重新赋值，否则不会被更新
+						str = str.replace("<timestamp>", Long.toString(System.currentTimeMillis() / 1000));//需要重新赋值，否则不会被更新
 					}
 					textAreaFinalString.setText(str);
 				}
@@ -713,7 +713,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener, ITab, IContex
     	for (IParameter para:paras){
     		if (paraMap.keySet().contains(para.getName())){
     			if (paraMap.get(para.getName()).contains("<timestamp>")){
-    				paraMap.put(para.getName(), paraMap.get(para.getName()).replace("<timestamp>", Long.toString(System.currentTimeMillis())));
+    				paraMap.put(para.getName(), paraMap.get(para.getName()).replace("<timestamp>", Long.toString(System.currentTimeMillis() / 1000)));
     			}else {
     				paraMap.put(para.getName(), para.getValue());
     				//stdout.println(para.getName()+":"+para.getValue());
